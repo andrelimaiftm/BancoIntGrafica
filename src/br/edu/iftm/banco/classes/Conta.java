@@ -1,5 +1,7 @@
 package br.edu.iftm.banco.classes;
 
+import javax.swing.JOptionPane;
+
 public class Conta {
 
     private static int totalDeContas;
@@ -59,7 +61,7 @@ public class Conta {
     }
 
     private void imprimirMensagem(String msg){
-        System.out.println(msg);
+        JOptionPane.showMessageDialog(null, msg, "Mensagem", JOptionPane.ERROR_MESSAGE);
     }
 
     public int getNumero(){

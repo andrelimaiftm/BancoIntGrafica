@@ -45,23 +45,25 @@ public class Banco {
     }
     
     public Conta buscarConta(int numero){
-        for (Conta conta : vetorContas) {
-            if(conta.getNumero() == numero){
-                return conta;
+        if(vetorContas[0] != null){
+            for (Conta conta : vetorContas) {
+                if(conta != null && conta.getNumero() == numero){
+                    return conta;
+                }
             }
-        }
+        }        
         return null;
     }
 
-    private boolean operacaoSaque(Conta conta, double valor){
+    public boolean operacaoSaque(Conta conta, double valor){
         return conta.sacar(valor);
     }
 
-    private boolean operacaoDeposito(Conta conta, double valor){
+    public boolean operacaoDeposito(Conta conta, double valor){
         return conta.depositar(valor);
     }
 
-    private boolean operacaoTransferir(Conta conta, Conta destino, double valor){
+    public boolean operacaoTransferir(Conta conta, Conta destino, double valor){
         return conta.transferir(destino, valor);
     }
 

@@ -1,11 +1,10 @@
 package br.edu.iftm.banco.view;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -26,6 +25,12 @@ public class InterfaceBanco {
 	private Banco banco;
 	private JTextField campoNumero;
 	private JTextField campoValorSaque;
+	private JTextField CampoNumeroDeposito;
+	private JTextField campoValorDeposito;
+	private JTextField campoNumeroSaldo;
+	private JTextField campoNumeroOrigem;
+	private JTextField campoNumeroDestino;
+	private JTextField campoValorTransferencia;
 
 	/**
 	 * Launch the application.
@@ -53,88 +58,17 @@ public class InterfaceBanco {
 		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		janela.getContentPane().setLayout(null);
 		
-		JPanel abaCadastro = new JPanel();
+		AbaCadastro abaCadastro = new AbaCadastro(banco);		
 		JPanel abaSaque = new JPanel();
+		JPanel abaDeposito = new JPanel();
+		JPanel abaSaldo = new JPanel();
+		JPanel abaTransferencia = new JPanel();
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 0, 377, 421);
+		tabbedPane.setBounds(0, 0, 388, 472);
 		janela.getContentPane().add(tabbedPane);
 		
 		tabbedPane.addTab("Cadastrar", abaCadastro);
-		abaCadastro.setLayout(null);
 		
-		JLabel labelNome = new JLabel("Nome:");
-		labelNome.setBounds(10, 11, 46, 14);
-		abaCadastro.add(labelNome);
-		
-		campoNome = new JTextField();
-		campoNome.setBounds(104, 8, 128, 20);
-		abaCadastro.add(campoNome);
-		campoNome.setColumns(10);
-		
-		JLabel labelSobrenome = new JLabel("Sobrenome:");
-		labelSobrenome.setBounds(10, 46, 84, 14);
-		abaCadastro.add(labelSobrenome);
-		
-		campoSobrenome = new JTextField();
-		campoSobrenome.setBounds(104, 39, 128, 20);
-		abaCadastro.add(campoSobrenome);
-		campoSobrenome.setColumns(10);
-		
-		JLabel labelCpf = new JLabel("CPF:");
-		labelCpf.setBounds(10, 83, 46, 14);
-		abaCadastro.add(labelCpf);
-		
-		campoCpf = new JTextField();
-		campoCpf.setBounds(104, 70, 128, 20);
-		abaCadastro.add(campoCpf);
-		campoCpf.setColumns(10);
-		
-		JLabel labelDataNasc = new JLabel("Data de Nascimento");
-		labelDataNasc.setBounds(10, 121, 128, 14);
-		abaCadastro.add(labelDataNasc);
-		
-		JLabel labelDia = new JLabel("Dia:");
-		labelDia.setBounds(10, 161, 46, 14);
-		abaCadastro.add(labelDia);
-		
-		campoDia = new JTextField();
-		campoDia.setBounds(104, 155, 86, 20);
-		abaCadastro.add(campoDia);
-		campoDia.setColumns(10);
-		
-		JLabel labelMes = new JLabel("Mes:");
-		labelMes.setBounds(10, 199, 46, 14);
-		abaCadastro.add(labelMes);
-		
-		campoMes = new JTextField();
-		campoMes.setBounds(104, 196, 86, 20);
-		abaCadastro.add(campoMes);
-		campoMes.setColumns(10);
-		
-		JLabel lbelAno = new JLabel("Ano: ");
-		lbelAno.setBounds(10, 238, 46, 14);
-		abaCadastro.add(lbelAno);
-		
-		campoAno = new JTextField();
-		campoAno.setBounds(104, 235, 86, 20);
-		abaCadastro.add(campoAno);
-		campoAno.setColumns(10);
-		
-		JButton botaoCadastro = new JButton("Cadastrar");
-		botaoCadastro.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String nome = campoNome.getText();
-				String sobreNome = campoSobrenome.getText();
-				String cpf = campoCpf.getText();
-				int dia = Integer.parseInt(campoDia.getText());
-				int mes = Integer.parseInt(campoMes.getText());
-				int ano = Integer.parseInt(campoAno.getText());
-				Cliente cl = new Cliente(nome, sobreNome, cpf, dia, mes, ano);
-				banco.abrirConta(cl);
-			}
-		});
-		botaoCadastro.setBounds(101, 288, 131, 23);
-		abaCadastro.add(botaoCadastro);
 		
 		tabbedPane.addTab("Saquer", abaSaque);
 		abaSaque.setLayout(null);
@@ -144,7 +78,7 @@ public class InterfaceBanco {
 		abaSaque.add(labelNumero);
 		
 		campoNumero = new JTextField();
-		campoNumero.setBounds(60, 8, 86, 20);
+		campoNumero.setBounds(83, 8, 86, 20);
 		abaSaque.add(campoNumero);
 		campoNumero.setColumns(10);
 		
@@ -153,18 +87,187 @@ public class InterfaceBanco {
 		abaSaque.add(labelValor);
 		
 		campoValorSaque = new JTextField();
-		campoValorSaque.setBounds(60, 49, 86, 20);
+		campoValorSaque.setBounds(83, 49, 86, 20);
 		abaSaque.add(campoValorSaque);
 		campoValorSaque.setColumns(10);
 		
 		JButton botaoSaque = new JButton("Saque");
 		botaoSaque.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				int numero  = Integer.parseInt(campoNumero.getText());
+				float valorSaque = Float.parseFloat(campoValorSaque.getText());
+				Conta c = banco.buscarConta(numero);
+				if(c != null){
+					if(banco.operacaoSaque(c, valorSaque)){
+						JOptionPane.showMessageDialog(null, "Deposito realizado com sucesso!", "Mensagem", JOptionPane.INFORMATION_MESSAGE);
+						campoNumero.setText("");
+						campoValorSaque.setText("");
+					}
+				}else{
+					JOptionPane.showMessageDialog(null, "Conta invalida!", "Mensagem", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		botaoSaque.setBounds(45, 99, 89, 23);
 		abaSaque.add(botaoSaque);
+		
+		tabbedPane.addTab("Depositar", abaDeposito);
+		abaDeposito.setLayout(null);
+		
+		JLabel numeroDepositoLabel = new JLabel("Numero:");
+		numeroDepositoLabel.setBounds(10, 11, 66, 14);
+		abaDeposito.add(numeroDepositoLabel);
+		
+		CampoNumeroDeposito = new JTextField();
+		CampoNumeroDeposito.setBounds(79, 8, 86, 20);
+		abaDeposito.add(CampoNumeroDeposito);
+		CampoNumeroDeposito.setColumns(10);
+		
+		JLabel valorDepositoLabel = new JLabel("Valor:");
+		valorDepositoLabel.setBounds(10, 60, 66, 14);
+		abaDeposito.add(valorDepositoLabel);
+		
+		campoValorDeposito = new JTextField();
+		campoValorDeposito.setBounds(79, 57, 86, 20);
+		abaDeposito.add(campoValorDeposito);
+		campoValorDeposito.setColumns(10);
+		
+		JButton botaoDepositar = new JButton("Depositar");
+		botaoDepositar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int numero  = Integer.parseInt(CampoNumeroDeposito.getText());
+				double valorDeposito = Double.parseDouble(campoValorDeposito.getText());
+				Conta c = banco.buscarConta(numero);
+				if(c != null){
+					if(banco.operacaoDeposito(c, valorDeposito)){
+						JOptionPane.showMessageDialog(null, "Deposito realizado com sucesso!", "Mensagem", JOptionPane.INFORMATION_MESSAGE);
+						CampoNumeroDeposito.setText("");
+						campoValorDeposito.setText("");
+					}
+				}else{
+					JOptionPane.showMessageDialog(null, "Conta invalida!", "Mensagem", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		botaoDepositar.setBounds(79, 120, 89, 23);
+		abaDeposito.add(botaoDepositar);
+		
+		tabbedPane.addTab("Saldo", abaSaldo);
+		abaSaldo.setLayout(null);
+		
+		JLabel numeroSaldoLabel = new JLabel("Numero:");
+		numeroSaldoLabel.setBounds(10, 11, 67, 14);
+		abaSaldo.add(numeroSaldoLabel);
+		
+		campoNumeroSaldo = new JTextField();
+		campoNumeroSaldo.setBounds(87, 8, 86, 20);
+		abaSaldo.add(campoNumeroSaldo);
+		campoNumeroSaldo.setColumns(10);		
+		
+		JLabel nomeClienteLabel = new JLabel("Nome:");
+		nomeClienteLabel.setBounds(10, 125, 95, 14);
+		abaSaldo.add(nomeClienteLabel);
+		
+		JLabel nomeSaldoLabel = new JLabel("");
+		nomeSaldoLabel.setBounds(107, 125, 197, 14);
+		abaSaldo.add(nomeSaldoLabel);
+		
+		JLabel valorSaldoLabel = new JLabel("Saldo: ");
+		valorSaldoLabel.setBounds(10, 183, 67, 14);
+		abaSaldo.add(valorSaldoLabel);
+		
+		JLabel valorSaldo = new JLabel("");
+		valorSaldo.setBounds(107, 183, 197, 14);
+		abaSaldo.add(valorSaldo);
+		
+		JButton botaoSaldo = new JButton("Saldo");
+		botaoSaldo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int numero  = Integer.parseInt(campoNumeroSaldo.getText());
+				Conta c = banco.buscarConta(numero);
+				if(c != null){
+					campoNumeroSaldo.setText("");
+					nomeSaldoLabel.setText(c.getCliente().getNome() + " " + c.getCliente().getSobrenome());
+					valorSaldo.setText(""+c.getSaldo());					
+				}else{
+					JOptionPane.showMessageDialog(null, "Conta invalida!", "Mensagem", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		botaoSaldo.setBounds(84, 67, 89, 23);
+		abaSaldo.add(botaoSaldo);
+		
+		
+		tabbedPane.addTab("Transferencia", abaTransferencia);
+		abaTransferencia.setLayout(null);
+		
+		JLabel numeroTransfOrigenLabel = new JLabel("Conta Origem:");
+		numeroTransfOrigenLabel.setBounds(10, 24, 110, 14);
+		abaTransferencia.add(numeroTransfOrigenLabel);
+		
+		campoNumeroOrigem = new JTextField();
+		campoNumeroOrigem.setBounds(142, 21, 86, 20);
+		abaTransferencia.add(campoNumeroOrigem);
+		campoNumeroOrigem.setColumns(10);
+		
+		JLabel numeroTransfDestinoLabel = new JLabel("Conta Destino:");
+		numeroTransfDestinoLabel.setBounds(10, 76, 110, 14);
+		abaTransferencia.add(numeroTransfDestinoLabel);
+		
+		campoNumeroDestino = new JTextField();
+		campoNumeroDestino.setBounds(142, 73, 86, 20);
+		abaTransferencia.add(campoNumeroDestino);
+		campoNumeroDestino.setColumns(10);
+		
+		JLabel valorTransfLabel = new JLabel("Valor:");
+		valorTransfLabel.setBounds(10, 121, 110, 14);
+		abaTransferencia.add(valorTransfLabel);
+		
+		campoValorTransferencia = new JTextField();
+		campoValorTransferencia.setBounds(142, 118, 86, 20);
+		abaTransferencia.add(campoValorTransferencia);
+		campoValorTransferencia.setColumns(10);
+		
+		JButton botaoTransferir = new JButton("Transferencia");
+		botaoTransferir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int numeroOrigem =0;
+				int numeroDestino = 0;
+				double valorTransferencia = 0d;
+				if(!campoNumeroOrigem.getText().isEmpty()){
+					numeroOrigem = Integer.parseInt(campoNumeroOrigem.getText());
+				}
+
+				if(!campoNumeroDestino.getText().isEmpty()){
+					numeroDestino = Integer.parseInt(campoNumeroDestino.getText());
+				}
+				
+				if(!campoValorTransferencia.getText().isEmpty()){
+					valorTransferencia = Double.parseDouble(campoValorTransferencia.getText());
+				}
+				
+				Conta contaOrigem = banco.buscarConta(numeroOrigem);
+				if(contaOrigem != null){
+					Conta contaDestino = banco.buscarConta(numeroDestino);
+					if(contaDestino != null){
+						if(banco.operacaoTransferir(contaOrigem, contaDestino, valorTransferencia)){
+							JOptionPane.showMessageDialog(null, "Transferencia realizada com sucesso!", "Mensagem", JOptionPane.INFORMATION_MESSAGE);
+							campoNumeroOrigem.setText("");
+							campoNumeroDestino.setText("");
+							campoValorTransferencia.setText("");
+						}else{
+
+						}
+					}else{
+					JOptionPane.showMessageDialog(null, "Conta de destino invalida!", "Mensagem", JOptionPane.ERROR_MESSAGE);
+				}
+				}else{
+					JOptionPane.showMessageDialog(null, "Conta de origem invalida!", "Mensagem", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
+		botaoTransferir.setBounds(92, 177, 136, 23);
+		abaTransferencia.add(botaoTransferir);
 		
 		
 	}
